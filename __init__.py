@@ -24,8 +24,12 @@ class Scale:
 scales = [
     Scale("Major", [0, 2, 4, 5, 7, 9, 11]),
     Scale("Natural Minor", [0, 2, 3, 5, 7, 8, 10]),
+    Scale("Harmonic Minor", [0, 2, 3, 5, 7, 8, 11]),
     Scale("Major Pentatonic", [0, 2, 4, 7, 9]),
     Scale("Minor Pentatonic", [0, 3, 5, 7, 10]),
+    Scale("Diminished", [0, 2, 3, 5, 6, 8, 9, 11]),
+    Scale("Augmented", [0, 3, 4, 7, 8, 11]),
+    Scale("Whole Tone", [0, 2, 4, 6, 8, 10]),
 ]
 
 note_names = [
