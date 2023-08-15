@@ -75,6 +75,9 @@ class ScalarApp(Application):
         return note_names[self.scale_base % 12]
 
     def draw(self, ctx: Context) -> None:
+        i = self.color_intensity
+        ctx.rgb(i, i, i).rectangle(-120, -120, 240, 240).fill()
+
         ctx.move_to(0, 0)
         ctx.rgb(255, 255, 255)
         ctx.text_align = ctx.CENTER
