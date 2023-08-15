@@ -75,14 +75,16 @@ class ScalarApp(Application):
         return note_names[self.scale_base % 12]
 
     def draw(self, ctx: Context) -> None:
-        i = self.color_intensity
-        ctx.rgb(i, i, i).rectangle(-120, -120, 240, 240).fill()
+        ctx.rgb(0, 0, 0).rectangle(-120, -120, 240, 240).fill()
 
-        ctx.move_to(0, 0)
         ctx.rgb(255, 255, 255)
         ctx.text_align = ctx.CENTER
         ctx.text_baseline = ctx.MIDDLE
-        ctx.text(self._base_note_name() + " " + self.scale.name)
+
+        ctx.move_to(0, -5)
+        ctx.text(self._base_note_name())
+        ctx.move_to(0, 5)
+        ctx.text(self.scale.name)
 
     def think(self, ins: InputState, delta_ms: int) -> None:
         super().think(ins, delta_ms)
