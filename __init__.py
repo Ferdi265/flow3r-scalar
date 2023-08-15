@@ -85,9 +85,9 @@ class ScalarApp(Application):
         ctx.text_align = ctx.CENTER
         ctx.text_baseline = ctx.MIDDLE
 
-        ctx.move_to(0, -10)
+        ctx.move_to(0, -12)
         ctx.text(self._base_note_name())
-        ctx.move_to(0, 10)
+        ctx.move_to(0, 12)
         ctx.text(self.scale.name)
 
     def think(self, ins: InputState, delta_ms: int) -> None:
