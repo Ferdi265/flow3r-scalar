@@ -1,13 +1,12 @@
-import captouch
-import bl00mbox
-
-blm = bl00mbox.Channel()
-import leds
-import hardware
-
 from st3m.goose import List
 from st3m.input import InputState
+from st3m.application import Application, ApplicationContext
 from ctx import Context
+import captouch
+import bl00mbox
+import leds
+
+blm = bl00mbox.Channel("Scalar")
 
 class Scale:
     name: str
@@ -28,8 +27,6 @@ scales = [
     Scale("Minor Pentatonic", [0, 3, 5, 7, 10]),
 ]
 
-from st3m.application import Application, ApplicationContext
-
 class ScalarApp(Application):
     def __init__(self, app_ctx: ApplicationContext) -> None:
         super().__init__(app_ctx)
@@ -37,18 +34,17 @@ class ScalarApp(Application):
         self.color_intensity = 0.0
         self.scale_index = 0
         self.scale: Scale = scales[0]
-        self.synths = [blm.new(bl00mbox.patches.tinysynth_fm) for i in range(10)]
+        self.synths = [blm.new(bl00mbox.patches.tinysynth) for i in range(10)]
         self.cp_prev = captouch.read()
 
         for i, synth in enumerate(self.synths):
-            synth.decay(500)
-            synth.waveform(-32767)
-            synth.attack(50)
-            synth.volume(0.3)
-            synth.sustain(0.9)
-            synth.release(800)
-            synth.fm_waveform(-32767)
-            synth.fm(1.5)
+            synth.signals.decay = 500
+            synth.signals.waveform = 0
+            synth.signals.attack = 50
+            synth.signals.volume = 0.3 * 32767
+            synth.signals.sustain = 0.9 * 32767
+            synth.signals.release = 800
+            synth.signals.output = blm.mixer
 
         self._set_scale(0)
         self.prev_captouch = [0] * 10
@@ -59,8 +55,7 @@ class ScalarApp(Application):
         if i != self.scale_index:
             self.scale_index = i
             self.scale = scales[i]
-            for j in range(40):
-                leds.set_hsv(j, hue, 1, 0.2)
+            leds.set_all_hsv(hue, 1, 0.2)
             leds.update()
 
     def draw(self, ctx: Context) -> None:
@@ -71,7 +66,7 @@ class ScalarApp(Application):
         ctx.text(self.scale.name)
 
         ctx.rgb(0, 0, 0)
-        hardware.scope_draw(ctx)
+        ctx.scope()
         ctx.fill()
 
     def think(self, ins: InputState, delta_ms: int) -> None:
@@ -81,9 +76,9 @@ class ScalarApp(Application):
         cts = captouch.read()
         for i in range(10):
             if cts.petals[i].pressed and (not self.cp_prev.petals[i].pressed):
-                self.synths[i].tone(self.scale.note(i))
-                self.synths[i].start()
+                self.synths[i].signals.pitch.tone = self.scale.note(i)
+                self.synths[i].signals.trigger.start()
                 self.color_intensity = 1.0
             elif (not cts.petals[i].pressed) and self.cp_prev.petals[i].pressed:
-                self.synths[i].stop()
+                self.synths[i].signals.trigger.stop()
         self.cp_prev = cts
