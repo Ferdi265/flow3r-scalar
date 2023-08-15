@@ -33,6 +33,7 @@ class ScalarApp(Application):
 
         self.color_intensity = 0.0
         self.scale_index = 0
+        self.scale_base = 0
         self.scale: Scale = scales[0]
         self.synths = [blm.new(bl00mbox.patches.tinysynth) for i in range(10)]
         self.cp_prev = captouch.read()
@@ -71,14 +72,24 @@ class ScalarApp(Application):
 
     def think(self, ins: InputState, delta_ms: int) -> None:
         super().think(ins, delta_ms)
+
         if self.color_intensity > 0:
             self.color_intensity -= self.color_intensity / 20
+
+        if self.input.buttons.app.left.pressed:
+            self.scale_base -= 1
+        if self.input.buttons.app.right.pressed:
+            self.scale_base += 1
+        if self.input.buttons.app.middle.pressed:
+            self._set_scale(self.scale_index + 1)
+
         cts = captouch.read()
         for i in range(10):
             if cts.petals[i].pressed and (not self.cp_prev.petals[i].pressed):
-                self.synths[i].signals.pitch.tone = self.scale.note(i)
+                self.synths[i].signals.pitch.tone = self.scale_base + self.scale.note(i)
                 self.synths[i].signals.trigger.start()
                 self.color_intensity = 1.0
             elif (not cts.petals[i].pressed) and self.cp_prev.petals[i].pressed:
                 self.synths[i].signals.trigger.stop()
+
         self.cp_prev = cts
