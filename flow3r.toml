@@ -1,0 +1,11 @@
+[app]
+name = "Scalar"
+menu = "Music"
+
+[entry]
+class = "ScalarApp"
+
+[metadata]
+author = "yrlf"
+license = "LGPL-3.0-only"
+url = "https://git.flow3r.garden/flow3r/flow3r-firmware"
