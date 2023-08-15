@@ -33,7 +33,7 @@ scales = [
 ]
 
 note_names = [
-    "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"
+    "A", "A# / Bb", "B", "C", "C# / Db", "D", "D# / Eb", "E", "F", "F# / Gb", "G", "G# / Ab"
 ]
 
 class ScalarApp(Application):
