@@ -9,6 +9,7 @@ import leds
 blm = bl00mbox.Channel("Scalar")
 
 class Scale:
+    __slots__ = ("name", "notes")
     name: str
     notes: List[int]
 
@@ -27,18 +28,22 @@ scales = [
     Scale("Minor Pentatonic", [0, 3, 5, 7, 10]),
 ]
 
+note_names = [
+    "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"
+]
+
 class ScalarApp(Application):
     def __init__(self, app_ctx: ApplicationContext) -> None:
         super().__init__(app_ctx)
 
         self.color_intensity = 0.0
-        self.scale_index = 0
         self.scale_base = 0
+        self.scale_index = 0
         self.scale: Scale = scales[0]
         self.synths = [blm.new(bl00mbox.patches.tinysynth) for i in range(10)]
         self.cp_prev = captouch.read()
 
-        for i, synth in enumerate(self.synths):
+        for synth in self.synths:
             synth.signals.decay = 500
             synth.signals.waveform = 0
             synth.signals.attack = 50
@@ -47,28 +52,34 @@ class ScalarApp(Application):
             synth.signals.release = 800
             synth.signals.output = blm.mixer
 
-        self._set_scale(0)
-        self.prev_captouch = [0] * 10
+        self._update_leds()
+
+    def _update_leds(self) -> None:
+        hue = 30 * (self.scale_base % 12) + (30 / len(scales)) * self.scale_index
+        leds.set_all_hsv(hue, 1, 0.2)
+        leds.update()
+
+    def _set_base(self, i: int) -> None:
+        if i != self.scale_base:
+            self.scale_base = i
+            self._update_leds()
 
     def _set_scale(self, i: int) -> None:
         i = i % len(scales)
-        hue = int(72 * (i + 0.5)) % 360
         if i != self.scale_index:
             self.scale_index = i
             self.scale = scales[i]
-            leds.set_all_hsv(hue, 1, 0.2)
-            leds.update()
+            self._update_leds()
+
+    def _base_note_name(self) -> str:
+        return note_names[self.scale_base % 12]
 
     def draw(self, ctx: Context) -> None:
-        i = self.color_intensity
-        ctx.rgb(i, i, i).rectangle(-120, -120, 240, 240).fill()
-
         ctx.move_to(0, 0)
-        ctx.text(self.scale.name)
-
-        ctx.rgb(0, 0, 0)
-        ctx.scope()
-        ctx.fill()
+        ctx.rgb(255, 255, 255)
+        ctx.text_align = ctx.CENTER
+        ctx.text_baseline = ctx.MIDDLE
+        ctx.text(self._base_note_name() + " " + self.scale.name)
 
     def think(self, ins: InputState, delta_ms: int) -> None:
         super().think(ins, delta_ms)
@@ -77,9 +88,9 @@ class ScalarApp(Application):
             self.color_intensity -= self.color_intensity / 20
 
         if self.input.buttons.app.left.pressed:
-            self.scale_base -= 1
+            self._set_base(self.scale_base - 1)
         if self.input.buttons.app.right.pressed:
-            self.scale_base += 1
+            self._set_base(self.scale_base + 1)
         if self.input.buttons.app.middle.pressed:
             self._set_scale(self.scale_index + 1)
 
