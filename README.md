@@ -57,6 +57,8 @@ capacitive petals.
 Select which Key to play. Default is the key of A. The current key is always
 displayed in the center of the screen.
 
+This menu is indicated by a square (◼) next to the left petal.
+
 - tilt left: decrease key by a half step
 - tilt right: increase key by a half step
 - press down: go to Settings Menu
@@ -65,6 +67,8 @@ displayed in the center of the screen.
 
 Select which Scale to play. Default is the Major scale. The current scale is
 always displayed in the center of the screen.
+
+This menu is indicated by a square (◼) next to the right petal.
 
 - tilt left: previous scale
 - tilt right: next scale
@@ -77,6 +81,8 @@ the interval sequence of the current scale from a different point. The current
 mode is indicated by a line (|) at the note where the interval sequence wraps
 around.
 
+This menu is indicated by a square (◼) next to the bottom left petal.
+
 - tilt left: previous mode
 - tilt right: next mode
 - press down: go to Settings Menu
@@ -86,6 +92,8 @@ around.
 Select at which petal the root note of the current scale should be located. The
 petal that will play the root of the current scale is marked with a triangle
 (▲).
+
+This menu is indicated by a square (◼) next to the bottom right petal.
 
 - tilt left: increase offset
 - tilt right: decrease offset
