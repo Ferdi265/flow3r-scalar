@@ -1,4 +1,4 @@
-from st3m._ui.view import ViewManager
+from st3m.ui.view import ViewManager
 from st3m.goose import Optional, List, Enum
 from st3m.input import InputState
 from st3m.application import Application, ApplicationContext
