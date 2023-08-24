@@ -101,4 +101,8 @@ This menu is indicated by a square (◼) next to the bottom right petal.
 
 ## Installation
 
-Put all files from this repo into `/sys/apps/scalar/` on your flow3r's flash.
+Put all files from this repo into `/sys/apps/yrlf-flow3r-scalar/` on your
+flow3r's flash.
+
+After first launch, you can edit the settings file in `scalar.json` on your
+flow3r's flash.
