@@ -73,15 +73,17 @@ class ScalarApp(Application):
         self._update_leds()
 
     def _load_settings(self) -> None:
-        settings = self._try_load_settings(self.bundle_path + "/scalar-default.json")
+        default_path = self.bundle_path + "/scalar-default.json"
+        settings_path = "/flash/scalar.json"
+
+        settings = self._try_load_settings(default_path)
         assert settings is not None, "failed to load default settings"
 
-        user_settings = self._try_load_settings("/flash/scalar.json")
-        if user_settings is not None:
+        user_settings = self._try_load_settings(settings_path)
+        if user_settings is None:
+            self._try_write_default_settings(settings_path, default_path)
+        else:
             settings.update(user_settings)
-
-        if settings != user_settings:
-            self._try_write_settings("/flash/scalar.json", settings)
 
         self._scales = [ Scale(scale["name"], scale["notes"]) for scale in settings["scales"] ]
         self._ui_labels = settings["ui_labels"]
@@ -94,9 +96,9 @@ class ScalarApp(Application):
             if e.errno != errno.ENOENT:
                 raise # ignore file not found
 
-    def _try_write_settings(self, path: str, settings: dict) -> None:
-        with open(path, "w") as f:
-            json.dump(settings, f)
+    def _try_write_default_settings(self, path: str, default_path: str) -> None:
+        with open(path, "w") as outfile, open(default_path, "r") as infile:
+            outfile.write(infile.read())
 
     def _update_leds(self) -> None:
         hue = 30 * (self._scale_key % 12) + (30 / len(self._scales)) * self._scale_index
