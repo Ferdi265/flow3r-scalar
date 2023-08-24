@@ -114,18 +114,26 @@ class ScalarApp(Application):
         ctx.text_align = ctx.CENTER
         ctx.text_baseline = ctx.MIDDLE
         ctx.font_size = 32
+
         ctx.rgb(255, 255, 255)
         ctx.move_to(0, -12)
         ctx.text(self._key_name())
 
-        ctx.text_align = ctx.CENTER
-        ctx.text_baseline = ctx.MIDDLE
-        ctx.font_size = 32
         while ctx.text_width(self.scale.name) > 200:
             ctx.font_size -= 1
         ctx.rgb(255, 255, 255)
         ctx.move_to(0, 12)
         ctx.text(self.scale.name)
+
+        def draw_text(petal, r, text, inv = False):
+            ctx.save()
+            if inv:
+                petal = (petal + 5) % 10
+                r = -r
+            ctx.rotate(petal * math.tau / 10 + math.pi)
+            ctx.move_to(0, r)
+            ctx.text(text)
+            ctx.restore()
 
         def draw_dot(petal, r):
             ctx.save()
@@ -154,16 +162,22 @@ class ScalarApp(Application):
             ctx.fill()
             ctx.restore()
 
+        ctx.font_size = 14
         if self.ui_state == UI_KEY or self.ui_state == UI_SELECT:
             draw_dot(8, 90)
+            draw_text(8, 75, "KEY", inv=True)
         if self.ui_state == UI_SCALE or self.ui_state == UI_SELECT:
             draw_dot(2, 90)
+            draw_text(2, 75, "SCALE", inv=True)
         if self.ui_state == UI_MODE or self.ui_state == UI_SELECT:
             draw_dot(6, 90)
+            draw_text(6, 75, "MODE")
         if self.ui_state == UI_OFFSET or self.ui_state == UI_SELECT:
             draw_dot(4, 90)
+            draw_text(4, 75, "OFFSET")
         if self.ui_state == UI_SELECT:
             draw_dot(0, 90)
+            draw_text(0, 75, "PLAY", inv=True)
 
         draw_tri(self.scale_offset, 110)
         if self.scale_mode != 0:
